@@ -1,0 +1,14 @@
+release/main.o
+release/qwcalsoftware.o
+release/qwparainput.o
+release/qwparainput2.o
+release/qwparainput3.o
+release/qwparainput4.o
+release/qwparainput5.o
+release/qrc_src.o
+release/moc_qwcalsoftware.o
+release/moc_qwparainput.o
+release/moc_qwparainput2.o
+release/moc_qwparainput3.o
+release/moc_qwparainput4.o
+release/moc_qwparainput5.o

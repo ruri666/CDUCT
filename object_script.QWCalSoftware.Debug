@@ -1,0 +1,14 @@
+debug/main.o
+debug/qwcalsoftware.o
+debug/qwparainput.o
+debug/qwparainput2.o
+debug/qwparainput3.o
+debug/qwparainput4.o
+debug/qwparainput5.o
+debug/qrc_src.o
+debug/moc_qwcalsoftware.o
+debug/moc_qwparainput.o
+debug/moc_qwparainput2.o
+debug/moc_qwparainput3.o
+debug/moc_qwparainput4.o
+debug/moc_qwparainput5.o
