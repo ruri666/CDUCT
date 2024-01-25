@@ -1,35 +1,21 @@
+#pragma execution_character_set("utf-8")
+
 #include "qwcalsoftware.h"
-#include "qwparainput.h"
-#include "qwparainput2.h"
-#include "qwparainput3.h"
-#include "qwparainput4.h"
-#include "qwparainput5.h"
 #include "ui_qwcalsoftware.h"
+#include "iconhelper.h"
+#include "quihelper.h"
 
 QWCalSoftware::QWCalSoftware(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::QWCalSoftware)
 {
     ui->setupUi(this);
-    setWindowState(Qt::WindowMaximized); //设置默认全屏
-    QScreen* screen = QGuiApplication::primaryScreen();
-    QRect rect = screen->geometry();
-    screenW = rect.width();
-    screenH = rect.height(); //获取用户屏幕尺寸
-//    std::cout<<1000/screenW<<"######"<<screenH<<std::endl;
-    iniUI();
+    this->initForm();
+    this->initStyle();
+    this->initLeftCons();
+    this->initLeftCal();
+    this->initLeftShow();
 
-    label = new QLabel(this);
-    label->setAlignment(Qt::AlignCenter);
-    label->setGeometry(20, 90, 450, 330);
-    label1 = new QLabel(this);
-    label1->setAlignment(Qt::AlignCenter);
-    label1->setGeometry(520*screenW/960, 90*screenH/540, 450*screenW/960, 330*screenH/540); //提前设置label(很重要)
-    //QGridLayout *layout = new QGridLayout(this);
-    //layout->addWidget(ui->graphicsView,0,0,1,2);
-    //layout->addWidget(ui->graphicsView_2,1,0);
-    //layout->addWidget(ui->graphicsView_3,1,1);
-    //ui->centralwidget->setLayout(layout);
 }
 
 QWCalSoftware::~QWCalSoftware()
@@ -37,21 +23,291 @@ QWCalSoftware::~QWCalSoftware()
     delete ui;
 }
 
-void QWCalSoftware::iniUI()
+void QWCalSoftware::getQssColor(const QString &qss, const QString &flag, QString &color)
 {
-    fLabCurFile = new QLabel;
-    fLabCurFile->setMinimumWidth(150);
-    fLabCurFile->setText("当前荷载步：");
-    ui->statusBar->addWidget(fLabCurFile); //添加状态栏label
+    int index = qss.indexOf(flag);
+    if (index >= 0) {
+        color = qss.mid(index + flag.length(), 7);
+    }
+}
 
-    sortComboBox = new QComboBox;
-    sortComboBox->setObjectName("combobox");
-    sortComboBox->addItem("模型1：巴西劈裂试验");
-    sortComboBox->addItem("模型2：单边缺口试件裂纹扩展试验");
-    sortComboBox->addItem("模型3：中心缺口试件裂纹扩展试验");
-    sortComboBox->addItem("模型4：L板断裂试验");
-    sortComboBox->addItem("模型5：xxx");
-    ui->toolBar->addWidget(sortComboBox); //添加combobox项
+void QWCalSoftware::getQssColor(const QString &qss, QString &textColor, QString &panelColor, QString &borderColor, QString &normalColorStart, QString &normalColorEnd, QString &darkColorStart, QString &darkColorEnd, QString &highColor)
+{
+    getQssColor(qss, "TextColor:", textColor);
+    getQssColor(qss, "PanelColor:", panelColor);
+    getQssColor(qss, "BorderColor:", borderColor);
+    getQssColor(qss, "NormalColorStart:", normalColorStart);
+    getQssColor(qss, "NormalColorEnd:", normalColorEnd);
+    getQssColor(qss, "DarkColorStart:", darkColorStart);
+    getQssColor(qss, "DarkColorEnd:", darkColorEnd);
+    getQssColor(qss, "HighColor:", highColor);
+}
+
+void QWCalSoftware::initForm()
+{
+    //设置无边框
+    QUIHelper::setFramelessForm(this);
+//    setWindowState(Qt::WindowMaximized);
+    //设置图标
+    IconHelper::setIcon(ui->labIco, 0xf073, 30);
+    IconHelper::setIcon(ui->btnMenu_Min, 0xf068);
+    IconHelper::setIcon(ui->btnMenu_Max, 0xf067);
+    IconHelper::setIcon(ui->btnMenu_Close, 0xf00d);
+
+    ui->widgetTitle->setProperty("form", "title");
+    ui->widgetTop->setProperty("nav", "top");
+
+    QFont font;
+    font.setPixelSize(20);
+    ui->labTitle->setFont(font);
+    ui->labTitle->setText("固体连续-非连续变形统一模拟软件");
+    this->setWindowTitle(ui->labTitle->text());
+
+    ui->stackedWidget->setStyleSheet("QLabel{font:12px;}");
+
+    QSize icoSize(32, 32);
+    int icoWidth = 85;
+
+    //设置顶部导航按钮
+    QList<QAbstractButton *> btns = ui->widgetTop->findChildren<QAbstractButton *>();
+    foreach (QAbstractButton *btn, btns) {
+        btn->setIconSize(icoSize);
+        btn->setMinimumWidth(icoWidth);
+        btn->setCheckable(true);
+        connect(btn, SIGNAL(clicked()), this, SLOT(buttonClick()));
+    }
+
+    ui->btnCons->click();
+
+    ui->widgetLeftCons->setProperty("flag", "left");
+    ui->widgetLeftCal->setProperty("flag", "left");
+    ui->widgetLeftShow->setProperty("flag", "left");
+    ui->page1->setStyleSheet(QString("QWidget[flag=\"left\"] QAbstractButton{min-height:%1px;max-height:%1px;}").arg(60));
+    ui->page2->setStyleSheet(QString("QWidget[flag=\"left\"] QAbstractButton{min-height:%1px;max-height:%1px;}").arg(40));
+    ui->page3->setStyleSheet(QString("QWidget[flag=\"left\"] QAbstractButton{min-height:%1px;max-height:%1px;}").arg(40));
+
+
+}
+
+void QWCalSoftware::initStyle()
+{
+    //加载样式表
+    QString qss;
+    QFile file(":/qss/blacksoft.css");
+    if (file.open(QFile::ReadOnly)) {
+        qss = QLatin1String(file.readAll());
+        QString paletteColor = qss.mid(20, 7);
+        qApp->setPalette(QPalette(paletteColor));
+        qApp->setStyleSheet(qss);
+        file.close();
+    }
+
+    //先从样式表中取出对应的颜色
+    QString textColor, panelColor, borderColor, normalColorStart, normalColorEnd, darkColorStart, darkColorEnd, highColor;
+    getQssColor(qss, textColor, panelColor, borderColor, normalColorStart, normalColorEnd, darkColorStart, darkColorEnd, highColor);
+
+    //将对应颜色设置到控件
+    this->borderColor = highColor;
+    this->normalBgColor = normalColorStart;
+    this->darkBgColor = panelColor;
+    this->normalTextColor = textColor;
+    this->darkTextColor = normalTextColor;
+}
+
+void QWCalSoftware::buttonClick()
+{
+    QAbstractButton *b = (QAbstractButton *)sender();
+    QString name = b->text();
+
+    QList<QAbstractButton *> btns = ui->widgetTop->findChildren<QAbstractButton *>();
+    foreach (QAbstractButton *btn, btns) {
+        btn->setChecked(btn == b);
+    }
+
+    if (name == "结构建模") {
+        ui->stackedWidget->setCurrentIndex(0);
+    } else if (name == "结构计算") {
+        ui->stackedWidget->setCurrentIndex(1);
+        ui->labPcs->setText("");
+    } else if (name == "后处理") {
+        ui->stackedWidget->setCurrentIndex(2);
+        ui->Slider->setValue(1);
+    } else if (name == "用户退出") {
+        exit(0);
+    }
+}
+
+void QWCalSoftware::initLeftCons()
+{
+    iconsCons << 0xf18e << 0xf18e << 0xf18e << 0xf18e;
+    btnsCons << ui->tbtnCons1 << ui->tbtnCons2 << ui->tbtnCons3 << ui->tbtnCons4;
+
+    int count = btnsCons.count();
+    for (int i = 0; i < count; ++i) {
+        QToolButton *btn = (QToolButton *)btnsCons.at(i);
+        btn->setCheckable(true);
+        btn->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+        connect(btn, SIGNAL(clicked(bool)), this, SLOT(leftConsClick()));
+    }
+
+    IconHelper::StyleColor styleColor;
+    styleColor.position = "left";
+    styleColor.iconSize = 18;
+    styleColor.iconWidth = 35;
+    styleColor.iconHeight = 25;
+    styleColor.borderWidth = 4;
+    styleColor.borderColor = borderColor;
+    styleColor.setColor(normalBgColor, normalTextColor, darkBgColor, darkTextColor);
+    IconHelper::setStyle(ui->widgetLeftCons, btnsCons, iconsCons, styleColor);
+    ui->tbtnCons1->click();
+
+    QFont font;
+    font.setPointSize(7);
+    QList<QLabel *> labs = ui->stackedWidgetIn->findChildren<QLabel *>();
+    foreach (QLabel *lab, labs) {
+        lab->setFont(font);
+    }
+}
+
+void QWCalSoftware::initLeftCal()
+{
+    iconsCal << 0xf039 << 0xf0da;
+    btnsCal << ui->tbtnCal1 << ui->tbtnCal2;
+
+    QToolButton *btn = (QToolButton *)btnsCal.at(0);
+    btn->setCheckable(true);
+    btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    connect(btn, SIGNAL(clicked(bool)), this, SLOT(leftRoadClick()));
+
+    btn = (QToolButton *)btnsCal.at(1);
+    btn->setCheckable(true);
+    btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    connect(btn, SIGNAL(clicked(bool)), this, SLOT(leftCalClick()));
+
+    IconHelper::StyleColor styleColor;
+    styleColor.position = "left";
+    styleColor.iconSize = 20;
+    styleColor.iconWidth = 35;
+    styleColor.iconHeight = 25;
+    styleColor.borderWidth = 4;
+    styleColor.borderColor = borderColor;
+    styleColor.setColor(normalBgColor, normalTextColor, darkBgColor, darkTextColor);
+    IconHelper::setStyle(ui->widgetLeftCal, btnsCal, iconsCal, styleColor);
+}
+
+void QWCalSoftware::initLeftShow()
+{
+    iconsShow << 0xf0a4 << 0xf25a << 0xf16e;
+    btnsShow << ui->tbtnShow1 << ui->tbtnShow2  << ui->tbtnShow3;
+
+    int count = btnsShow.count();
+    for (int i = 0; i < count; ++i) {
+        QToolButton *btn = (QToolButton *)btnsShow.at(i);
+        btn->setCheckable(true);
+        btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        connect(btn, SIGNAL(clicked(bool)), this, SLOT(leftShowClick()));
+    }
+
+    IconHelper::StyleColor styleColor;
+    styleColor.position = "left";
+    styleColor.iconSize = 20;
+    styleColor.iconWidth = 35;
+    styleColor.iconHeight = 25;
+    styleColor.borderWidth = 4;
+    styleColor.borderColor = borderColor;
+    styleColor.setColor(normalBgColor, normalTextColor, darkBgColor, darkTextColor);
+    IconHelper::setStyle(ui->widgetLeftShow, btnsCal, iconsCal, styleColor);
+
+    ui->Slider->setValue(50);
+}
+
+void QWCalSoftware::leftConsClick()
+{
+    QAbstractButton *b = (QAbstractButton *)sender();
+    QString name = b->text();
+
+    int count = btnsCons.count();
+    std::cout << count;
+    for (int i = 0; i < count; ++i) {
+        QAbstractButton *btn = btnsCons.at(i);
+        btn->setChecked(btn == b);
+    }
+
+    if (name == "巴西劈裂试验") {
+        ui->stackedWidgetIn->setCurrentIndex(0);
+    } else if (name == "单边缺口试件裂纹扩展试验") {
+        ui->stackedWidgetIn->setCurrentIndex(1);
+    } else if (name == "中心缺口试件裂纹扩展试验") {
+        ui->stackedWidgetIn->setCurrentIndex(2);
+    } else if (name == "L板断裂试验") {
+        ui->stackedWidgetIn->setCurrentIndex(3);
+    }
+}
+
+void QWCalSoftware::leftRoadClick()
+{
+    QToolButton *b = (QToolButton *)sender();
+
+    int count = btnsCal.count();
+    for (int i = 0; i < count; ++i) {
+        QAbstractButton *btn = btnsCal.at(i);
+        btn->setChecked(btn == b);
+    }
+
+    filePath = QFileDialog::getExistingDirectory(this, "选择vtk文件存储路径", "");
+    std::cout << "#######################";
+    qDebug() << filePath << endl;
+}
+
+void QWCalSoftware::leftCalClick()
+{
+    QToolButton *b = (QToolButton *)sender();
+
+    int count = btnsCal.count();
+    for (int i = 0; i < count; ++i) {
+        QAbstractButton *btn = btnsCal.at(i);
+        btn->setChecked(btn == b);
+    }
+
+    ui->labPcs->setText("当前项目：正在计算中");
+
+    if (proIndex == 0) {
+        calGMPPD();
+    } else if (proIndex == 1) {
+        calEdgeDmg();
+    } else if (proIndex == 2) {
+        calCtDmg();
+    } else if (proIndex == 3) {
+        calLBoard();
+    }
+}
+
+void QWCalSoftware::leftShowClick()//未完成
+{
+    QToolButton *b = (QToolButton *)sender();
+    QString name = b->text();
+
+    int count = btnsShow.count();
+    for (int i = 0; i < count; ++i) {
+        QAbstractButton *btn = btnsShow.at(i);
+        btn->setChecked(btn == b);
+    }
+
+    QPixmap pix;
+    QGraphicsScene *scn = new QGraphicsScene;
+
+    if (name == "x方向位移图") {
+        pix = QPixmap::fromImage(img2);
+    } else if (name == "y方向位移图") {
+        pix = QPixmap::fromImage(img3);
+    } else if (name == "结构损伤散点图") {
+        pix = QPixmap::fromImage(img1);
+    }
+
+    QGraphicsPixmapItem *p = scn->addPixmap(pix);
+    ui->View->setScene(scn);
+    ui->View->fitInView((QGraphicsItem*)p, Qt::IgnoreAspectRatio);
+    ui->View->show();
 }
 
 void QWCalSoftware::calGMPPD()
@@ -60,19 +316,19 @@ void QWCalSoftware::calGMPPD()
 
     //物理和计算参数设定
     //x方向物质点数,必须偶数
-    const int ndivx = paraL[8];
+    const int ndivx = paras[7];
     //y方向点个数
 //    const int ndivy = ndivx;
-    const int ndivy = paraL[9];
+    const int ndivy = paras[8];
     //边界层厚度
     const int nbnd = 3;
     //总的点个数，内部点加虚拟边界层
     const int totnode = ndivx * ndivy + 2 * nbnd * ndivx;
     //总荷载步数
-    const int nt = paraL[7];
+    const int nt = foot;
 //    const int nt = 100;
     // 速度边界
-    double vbd = paraL[10];
+    double vbd = paras[9];
     //物质点的最大邻域粒子数
     const int maxfam = 300;
     //试件长度
@@ -83,14 +339,14 @@ void QWCalSoftware::calGMPPD()
     w = width;
     //初始裂纹长度
 //    double cracklength = 0.5 * length;
-    double cracklength = paraL[5];
+    double cracklength = paras[5];
     //物质点间距
     double dx = length / ndivx;
     //物质点间距
     double dy = width / ndivy;
     //试件厚度
 //    double thick = min(dx, dy);
-    double thick = paraL[6];
+    double thick = paras[6];
     //邻域半径
     double delta = 3.015 * sqrt(pow(dx, 2) + pow(dy, 2));  //固定
     //邻域半径的一半，用于计算校正系数
@@ -101,15 +357,15 @@ void QWCalSoftware::calGMPPD()
     double vol = area * thick;
     // 材料密度
 //    double rho = 8000.0;
-    double rho = paraL[2];
+    double rho = paras[2];
     //弹性模量
 //    double emod = 192.0e9;
-    double emod = paraL[0];
+    double emod = paras[0];
     //临界能量释放率
     double G0 = 1000.0;
     //泊松比
 //    double pratio = 0.3;
-    double pratio = paraL[1];
+    double pratio = paras[1];
     // 体积模量
     double kmod = emod / (2.0 * (1 - pratio));
     // 虚拟键参数
@@ -402,7 +658,7 @@ void QWCalSoftware::calGMPPD()
         }
 
         //后处理输出到paraview
-        std::string filename = "D:\\result\\GMPPD_";
+        std::string filename = filePath.toStdString() + "/GMPPD_";
         filename = filename + std::to_string(tt) + ".vtk";
         std::ofstream outfile;
         outfile.open(filename);
@@ -445,7 +701,7 @@ void QWCalSoftware::calGMPPD()
         //后处理结束
     }
 //    double  end = GetTickCount64();
-    fLabCurFile->setText("当前项目：已计算完毕");
+    ui->labPcs->setText("当前项目：已计算完毕");
 
     return;
 }
@@ -454,39 +710,39 @@ void QWCalSoftware::calEdgeDmg()
 {
     //物理和计算参数设定
     //x方向物质点数,必须偶数
-    const int ndivx = paraL[8];
+    const int ndivx = paras[7];
     //y方向点个数
-    const int ndivy = paraL[9];
+    const int ndivy = paras[8];
 //    const int ndivy = ndivx;
     //边界层厚度
     const int nbnd = 3;
     //总的点个数，内部点加虚拟边界层
     const int totnode = ndivx * ndivy + 2 * nbnd * ndivx ;
     //总荷载步数
-    const int nt = paraL[7];
+    const int nt = foot;
 //    const int nt = 100;
     // 速度边界
-    double vbd = paraL[10];
+    double vbd = paras[9];
 //    double vbd = 30;
     //物质点的最大邻域粒子数
     const int maxfam = 300;
     //试件长度
-    double length = paraL[3];
+    double length = paras[3];
 //    double length = 0.5;
     l = length;
     //试件宽度
-    double width = paraL[4];
+    double width = paras[4];
 //    double width = 0.5;
     w = width;
     //初始裂纹长度
-    double cracklength = paraL[6];
+    double cracklength = paras[6];
 //    double cracklength = 0.5 * length;
     //物质点间距
     double dx = length / ndivx;
     //物质点间距
     double dy = width / ndivy;
     //试件厚度
-    double thick = paraL[5];
+    double thick = paras[5];
 //    double thick = min(dx,dy);
     //邻域半径
     double delta = 3.015 * sqrt(pow(dx, 2)+ pow(dy, 2));
@@ -498,15 +754,15 @@ void QWCalSoftware::calEdgeDmg()
     double vol = area * thick;
     // 材料密度
     //    double rho = 8000.0;
-    double rho = paraL[2];
+    double rho = paras[2];
     //弹性模量
     //    double emod = 192.0e9;
-    double emod = paraL[0];
+    double emod = paras[0];
     //临界能量释放率
     double G0 = 1000.0;
     //泊松比
     //    double pratio = 0.3;
-    double pratio = paraL[1];
+    double pratio = paras[1];
     // 体积模量
     double kmod = emod / (2.0 * (1 - pratio));
     // 虚拟键参数
@@ -798,7 +1054,7 @@ void QWCalSoftware::calEdgeDmg()
         }
 
         //后处理输出到paraview
-        std::string filename = "D:\\result\\GMPPD_";
+        std::string filename = filePath.toStdString()+ "/GMPPD_";
         filename = filename + std::to_string(tt) + ".vtk";
         std::ofstream outfile;
         outfile.open(filename);
@@ -840,44 +1096,45 @@ void QWCalSoftware::calEdgeDmg()
         outfile.close();
         //后处理结束
     }
+    ui->labPcs->setText("当前项目：已计算完毕");
 }
 
 void QWCalSoftware::calCtDmg()
 {
     //物理和计算参数设定
     //x方向物质点数,必须偶数
-    const int ndivx = paraL[8];
+    const int ndivx = paras[7];
     //y方向点个数
-    const int ndivy = paraL[9];
+    const int ndivy = paras[8];
     //边界层厚度
     const int nbnd = 3;
     //总的点个数，内部点加虚拟边界层
     const int totnode = ndivx * ndivy + 2 * nbnd * ndivx ;
     //总荷载步数
-    const int nt = paraL[7];
+    const int nt = foot;
 //    const int nt = 100;
     // 速度边界
-    double vbd = paraL[10];
+    double vbd = paras[9];
 //    double vbd = 30;
     //物质点的最大邻域粒子数
     const int maxfam = 300;
     //试件长度
-    double length = paraL[3];
+    double length = paras[3];
 //    double length = 0.5;
     l = length;
     //试件宽度
-    double width = paraL[4];
+    double width = paras[4];
 //    double width = 0.5;
     w = width;
     //初始裂纹长度
-    double cracklength = paraL[6];
+    double cracklength = paras[6];
 //    double cracklength = 0.5 * length;
     //物质点间距
     double dx = length / ndivx;
     //物质点间距
     double dy = width / ndivy;
     //试件厚度
-    double thick = paraL[5];
+    double thick = paras[5];
 //    double thick = min(dx,dy);
     //邻域半径
     double delta = 3.015 * sqrt(pow(dx, 2)+ pow(dy, 2));
@@ -889,15 +1146,15 @@ void QWCalSoftware::calCtDmg()
     double vol = area * thick;
     // 材料密度
     //    double rho = 8000.0;
-    double rho = paraL[2];
+    double rho = paras[2];
     //弹性模量
     //    double emod = 192.0e9;
-    double emod = paraL[0];
+    double emod = paras[0];
     //临界能量释放率
     double G0 = 1000.0;
     //泊松比
     //    double pratio = 0.3;
-    double pratio = paraL[1];
+    double pratio = paras[1];
     // 体积模量
     double kmod = emod / (2.0 * (1 - pratio));
     // 虚拟键参数
@@ -1189,7 +1446,7 @@ void QWCalSoftware::calCtDmg()
         }
 
         //后处理输出到paraview
-        std::string filename = "D:\\result\\GMPPD_";
+        std::string filename = filePath.toStdString() + "/GMPPD_";
         filename = filename + std::to_string(tt) + ".vtk";
         std::ofstream outfile;
         outfile.open(filename);
@@ -1231,29 +1488,30 @@ void QWCalSoftware::calCtDmg()
         outfile.close();
         //后处理结束
     }
+    ui->labPcs->setText("当前项目：已计算完毕");
 }
 
 void QWCalSoftware::calLBoard()
 {
     //物理和计算参数设定
     //x方向物质点数,必须偶数
-    const int ndivx = paraL[7];
+    const int ndivx = paras[6];
     //y方向点个数
-    const int ndivy = paraL[8];
+    const int ndivy = paras[7];
     //边界层厚度
     const int nbnd = 3;
     //总的点个数，内部点加虚拟边界层，L板总的点个数需要在建立物质点模型时计算
     int totnode = ndivx * ndivy + 2 * nbnd * ndivx ;
     // 速度边界
-    double vbd = paraL[9];
+    double vbd = paras[8];
     //物质点的最大邻域粒子数
     const int maxfam = 300;
     //试件长度
-    double length = paraL[3];
+    double length = paras[3];
 //    double length = 0.5;
     l = length;
     //试件宽度
-    double width = paraL[4];
+    double width = paras[4];
 //    double width = 0.5;
     w = length;
     //L板右下空缺处
@@ -1267,7 +1525,7 @@ void QWCalSoftware::calLBoard()
     //物质点间距
     double dy = width / ndivy;
     //试件厚度
-    double thick = paraL[5];
+    double thick = paras[5];
 //    double thick = dx;
     //邻域半径
     double delta = 3.015 * sqrt(pow(dx, 2)+ pow(dy, 2));
@@ -1278,15 +1536,15 @@ void QWCalSoftware::calLBoard()
     //物质点体积
     double vol = area * thick;
     // 材料密度
-    double rho = paraL[2];
+    double rho = paras[2];
 //    double rho = 2265.0;
     //弹性模量
-    double emod = paraL[0];
+    double emod = paras[0];
 //    double emod = 25.85e9;
     //临界能量释放率
     double G0 = 65.0;
     //泊松比 0.18，键型可以么？
-    double pratio = paraL[1];
+    double pratio = paras[1];
 //    double pratio = 0.3;
     // 体积模量
     double kmod = emod / (2.0 * (1 - pratio));
@@ -1299,7 +1557,7 @@ void QWCalSoftware::calLBoard()
     //总加载时间
     double totalTime = 0.002;
     //总荷载步数
-    const int nt = paraL[6];
+    const int nt = foot;
 //    const int nt = 100;
 //    const int nt = floor(totalTime / dt);
     // 提前施加的荷载，用于计算表面校正系数
@@ -1620,7 +1878,7 @@ void QWCalSoftware::calLBoard()
         }
 
         //后处理输出到paraview
-        std::string filename = "D:\\result\\GMPPD_";
+        std::string filename = filePath.toStdString() + "/GMPPD_";
         filename = filename + std::to_string(tt) + ".vtk";
         std::ofstream outfile;
         outfile.open(filename);
@@ -1662,14 +1920,15 @@ void QWCalSoftware::calLBoard()
         outfile.close();
         //后处理结束
     }
+    ui->labPcs->setText("当前项目：已计算完毕");
 }
 
-void QWCalSoftware::paintScatter(int n,QImage &image1,QImage &image2,QImage &image3)
+void QWCalSoftware::paintScatter(int n) //画图函数
 {
-    QString str1="D:\\result\\GMPPD_";
+    QString str1="/GMPPD_";
     QString str2=QString::number(n);
     QString str3=".vtk";
-    QString filename = str1+str2+str3;
+    QString filename = filePath+str1+str2+str3;
     QFile file(filename);
     if(!file.exists())return;
     if(!file.open(QIODevice::ReadOnly|QIODevice::Text))return; //打开文件
@@ -1705,7 +1964,7 @@ void QWCalSoftware::paintScatter(int n,QImage &image1,QImage &image2,QImage &ima
         xdisp<<strList[0].toFloat();
         ydisp<<strList[1].toFloat();
         str = stream.readLine();
-    } //寻找disp值
+    } //寻找disp位移值
 
     str.replace(QRegExp("[\\s]+"), " ");
     strList = str.split(" ");
@@ -1721,12 +1980,13 @@ void QWCalSoftware::paintScatter(int n,QImage &image1,QImage &image2,QImage &ima
         file0.remove();
     } //删除已有图片
 
+    //以下为绘图内容
     QColor backColor = qRgb(255, 255, 255);
-    image1 = QImage(800, 600, QImage::Format_RGB32);
+    QImage image1 = QImage(800, 600, QImage::Format_RGB32);
     image1.fill(backColor);
-    image2 = QImage(800, 600, QImage::Format_RGB32);
+    QImage image2 = QImage(800, 600, QImage::Format_RGB32);
     image2.fill(backColor);
-    image3 = QImage(800, 600, QImage::Format_RGB32);
+    QImage image3 = QImage(800, 600, QImage::Format_RGB32);
     image3.fill(backColor); //设置画布
 
     QColor color1=qRgb(0, 0,128 + 4 * (7 - 0));
@@ -1838,9 +2098,10 @@ void QWCalSoftware::paintScatter(int n,QImage &image1,QImage &image2,QImage &ima
     QPen pen16;
     pen16.setColor(color16);
 
-
 //    painter1.setBrush(brush);
 //    brush.setStyle(Qt::Dense1Pattern);
+    QColor color;
+    QRect section;
 
     qreal dmgMax = *max_element(dmg.begin(), dmg.end());
     qreal dmgMin = *min_element(dmg.begin(), dmg.end());
@@ -1852,104 +2113,86 @@ void QWCalSoftware::paintScatter(int n,QImage &image1,QImage &image2,QImage &ima
         gray = (dmg[i]-dmgMin)/(dmgMax-dmgMin)*255;
         if(gray >= 0 && gray <= 15)
         {
-            painter1.setBrush(brush1);
-            painter1.setPen(pen1);
-            painter1.drawEllipse(QPoint(x[i]*l*1600+330,y[i]*w*1600+300),10,10);
+            section.setRect(x[i]*l*1600+330,y[i]*w*1600+300,15,15);
+            painter1.fillRect(section,color1);
         }
         else if(gray >= 16 && gray <= 31)
         {
-            painter1.setBrush(brush2);
-            painter1.setPen(pen2);
-            painter1.drawEllipse(QPoint(x[i]*l*1600+330,y[i]*w*1600+300),10,10);
+            section.setRect(x[i]*l*1600+330,y[i]*w*1600+300,15,15);
+            painter1.fillRect(section,color2);
         }
         else if(gray >= 32 && gray <= 47)
         {
-            painter1.setBrush(brush3);
-            painter1.setPen(pen3);
-            painter1.drawEllipse(QPoint(x[i]*l*1600+330,y[i]*w*1600+300),10,10);
+            section.setRect(x[i]*l*1600+330,y[i]*w*1600+300,15,15);
+            painter1.fillRect(section,color3);
         }
         else if(gray >= 48 && gray <= 63)
         {
-            painter1.setBrush(brush4);
-            painter1.setPen(pen4);
-            painter1.drawEllipse(QPoint(x[i]*l*1600+330,y[i]*w*1600+300),10,10);
+            section.setRect(x[i]*l*1600+330,y[i]*w*1600+300,15,15);
+            painter1.fillRect(section,color4);
         }
         else if(gray >= 64 && gray <= 79)
         {
-            painter1.setBrush(brush5);
-            painter1.setPen(pen5);
-            painter1.drawEllipse(QPoint(x[i]*l*1600+330,y[i]*w*1600+300),10,10);
+            section.setRect(x[i]*l*1600+330,y[i]*w*1600+300,15,15);
+            painter1.fillRect(section,color5);
         }
         else if(gray >= 80 && gray <= 95)
         {
-            painter1.setBrush(brush6);
-            painter1.setPen(pen6);
-            painter1.drawEllipse(QPoint(x[i]*l*1600+330,y[i]*w*1600+300),10,10);
+            section.setRect(x[i]*l*1600+330,y[i]*w*1600+300,15,15);
+            painter1.fillRect(section,color6);
         }
         else if(gray >= 96 && gray <= 111)
         {
-            painter1.setBrush(brush7);
-            painter1.setPen(pen7);
-            painter1.drawEllipse(QPoint(x[i]*l*1600+330,y[i]*w*1600+300),10,10);
+            section.setRect(x[i]*l*1600+330,y[i]*w*1600+300,15,15);
+            painter1.fillRect(section,color7);
         }
         else if(gray >= 112 && gray <= 127)
         {
-            painter1.setBrush(brush8);
-            painter1.setPen(pen8);
-            painter1.drawEllipse(QPoint(x[i]*l*1600+330,y[i]*w*1600+300),10,10);
+            section.setRect(x[i]*l*1600+330,y[i]*w*1600+300,15,15);
+            painter1.fillRect(section,color8);
         }
         else if(gray >= 128 && gray <= 143)
         {
-            painter1.setBrush(brush9);
-            painter1.setPen(pen9);
-            painter1.drawEllipse(QPoint(x[i]*l*1600+330,y[i]*w*1600+300),10,10);
+            section.setRect(x[i]*l*1600+330,y[i]*w*1600+300,15,15);
+            painter1.fillRect(section,color9);
         }
         else if(gray >= 144 && gray <= 159)
         {
-            painter1.setBrush(brush10);
-            painter1.setPen(pen10);
-            painter1.drawEllipse(QPoint(x[i]*l*1600+330,y[i]*w*1600+300),10,10);
+            section.setRect(x[i]*l*1600+330,y[i]*w*1600+300,15,15);
+            painter1.fillRect(section,color10);
         }
         else if(gray >= 160 && gray <= 175)
         {
-            painter1.setBrush(brush11);
-            painter1.setPen(pen11);
-            painter1.drawEllipse(QPoint(x[i]*l*1600+330,y[i]*w*1600+300),10,10);
+            section.setRect(x[i]*l*1600+330,y[i]*w*1600+300,15,15);
+            painter1.fillRect(section,color11);
         }
         else if(gray >= 176 && gray <= 191)
         {
-            painter1.setBrush(brush12);
-            painter1.setPen(pen12);
-            painter1.drawEllipse(QPoint(x[i]*l*1600+330,y[i]*w*1600+300),10,10);
+            section.setRect(x[i]*l*1600+330,y[i]*w*1600+300,15,15);
+            painter1.fillRect(section,color12);
         }
         else if(gray >= 192 && gray <= 207)
         {
-            painter1.setBrush(brush13);
-            painter1.setPen(pen13);
-            painter1.drawEllipse(QPoint(x[i]*l*1600+330,y[i]*w*1600+300),10,10);
+            section.setRect(x[i]*l*1600+330,y[i]*w*1600+300,15,15);
+            painter1.fillRect(section,color13);
         }
         else if(gray >= 208 && gray <= 223)
         {
-            painter1.setBrush(brush14);
-            painter1.setPen(pen14);
-            painter1.drawEllipse(QPoint(x[i]*l*1600+330,y[i]*w*1600+300),10,10);
+            section.setRect(x[i]*l*1600+330,y[i]*w*1600+300,15,15);
+            painter1.fillRect(section,color14);
         }
         else if(gray >= 224 && gray <= 239)
         {
-            painter1.setBrush(brush15);
-            painter1.setPen(pen15);
-            painter1.drawEllipse(QPoint(x[i]*l*1600+330,y[i]*w*1600+300),10,10);
+            section.setRect(x[i]*l*1600+330,y[i]*w*1600+300,15,15);
+            painter1.fillRect(section,color15);
         }
         else if(gray >= 240 && gray <= 255)
         {
-            painter1.setBrush(brush16);
-            painter1.setPen(pen16);
-            painter1.drawEllipse(QPoint(x[i]*l*1600+330,y[i]*w*1600+300),10,10);
+            section.setRect(x[i]*l*1600+330,y[i]*w*1600+300,15,15);
+            painter1.fillRect(section,color16);
         }
     } //画散点图
 
-    QRect section;
-    QColor color;
     float colorBarLength=343.0;
 
     float tempLength=colorBarLength/4; //85.75
@@ -2150,153 +2393,234 @@ void QWCalSoftware::paintScatter(int n,QImage &image1,QImage &image2,QImage &ima
     painter3.drawText(650,130,QString::number(ydispMax));
     painter3.drawText(650,135+353,QString::number(ydispMin)); //显示最大最小值
 
+    img1 = image1; img2 = image2; img3 = image3;
 }
 
-void QWCalSoftware::on_pushButton_clicked()
+
+
+void QWCalSoftware::on_btnLoad1_clicked()
 {
-    int tag = sortComboBox->currentIndex();
-    if(tag==0){
-        QWParaInput *dlg=new QWParaInput(this);
-        Qt::WindowFlags flags=dlg->windowFlags();
-        dlg->setWindowFlags(flags|Qt::MSWindowsFixedSizeDialogHint);
-        int ret=dlg->exec();
-        if(ret==QDialog::Accepted)
-        {
-            QList<float> list;
-            list<<dlg->paraList[0]<<dlg->paraList[1]<<dlg->paraList[2]<<dlg->paraList[3]<<dlg->paraList[4]<<dlg->paraList[5]<<dlg->paraList[6]<<dlg->paraList[7]<<dlg->paraList[8]<<dlg->paraList[9]<<dlg->paraList[10];
-            paraL = list;
-            proIndex = 0;
-//            cout<<paraL[0]<<"#############"<<endl;
-        }
-    }
-    if(tag==1){
-        QWParaInput2 *dlg=new QWParaInput2(this);
-        Qt::WindowFlags flags=dlg->windowFlags();
-        dlg->setWindowFlags(flags|Qt::MSWindowsFixedSizeDialogHint);
-        int ret=dlg->exec();
-        if(ret==QDialog::Accepted)
-        {
-            QList<float> list;
-            list<<dlg->paraList[0]<<dlg->paraList[1]<<dlg->paraList[2]<<dlg->paraList[3]<<dlg->paraList[4]<<dlg->paraList[5]<<dlg->paraList[6]<<dlg->paraList[7]<<dlg->paraList[8]<<dlg->paraList[9]<<dlg->paraList[10];
-            paraL = list;
-            proIndex = 1;
-        }
-    }
-    if(tag==2){
-        QWParaInput3 *dlg=new QWParaInput3(this);
-        Qt::WindowFlags flags=dlg->windowFlags();
-        dlg->setWindowFlags(flags|Qt::MSWindowsFixedSizeDialogHint);
-        int ret=dlg->exec();
-        if(ret==QDialog::Accepted)
-        {
-            QList<float> list;
-            list<<dlg->paraList[0]<<dlg->paraList[1]<<dlg->paraList[2]<<dlg->paraList[3]<<dlg->paraList[4]<<dlg->paraList[5]<<dlg->paraList[6]<<dlg->paraList[7]<<dlg->paraList[8]<<dlg->paraList[9]<<dlg->paraList[10];
-            paraL = list;
-            proIndex = 2;
-        }
-    }
-    if(tag==3){
-        QWParaInput4 *dlg=new QWParaInput4(this);
-        Qt::WindowFlags flags=dlg->windowFlags();
-        dlg->setWindowFlags(flags|Qt::MSWindowsFixedSizeDialogHint);
-        int ret=dlg->exec();
-        if(ret==QDialog::Accepted)
-        {
-            QList<float> list;
-            list<<dlg->paraList[0]<<dlg->paraList[1]<<dlg->paraList[2]<<dlg->paraList[3]<<dlg->paraList[4]<<dlg->paraList[5]<<dlg->paraList[6]<<dlg->paraList[7]<<dlg->paraList[8]<<dlg->paraList[9];
-            paraL = list;
-            proIndex = 3;
-        }
-    }
-    if(tag==4){
-        QWParaInput5 *dlg=new QWParaInput5(this);
-        Qt::WindowFlags flags=dlg->windowFlags();
-        dlg->setWindowFlags(flags|Qt::MSWindowsFixedSizeDialogHint);
-        int ret=dlg->exec();
-        if(ret==QDialog::Accepted)
-        {
-            QList<float> list;
-            list<<dlg->paraList[0]<<dlg->paraList[1]<<dlg->paraList[2]<<dlg->paraList[3]<<dlg->paraList[4]<<dlg->paraList[5]<<dlg->paraList[6]<<dlg->paraList[7]<<dlg->paraList[8]<<dlg->paraList[9]<<dlg->paraList[10]<<dlg->paraList[11]<<dlg->paraList[12];
-            paraL = list;
-            proIndex = 4;
-        }
-    }
+    proIndex = 0;
+    paras.clear();
+    QString str = ui->txt1_1->text();
+    paras.append(str.toFloat());
 
+    str = ui->txt1_2->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt1_3->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt1_4->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt1_5->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt1_6->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt1_7->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt1_8->text();
+    foot = str.toInt();
+
+    str = ui->txt1_9->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt1_10->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt1_11->text();
+    paras.append(str.toFloat());
+
+    ui->Slider->setMaximum(foot);
 }
 
 
-void QWCalSoftware::on_pushButton_3_clicked()
+void QWCalSoftware::on_btnLoad2_clicked()
 {
-    tag1 = 1;
-    imageA = QImage(800, 600, QImage::Format_RGB32);
-    imageB = QImage(800, 600, QImage::Format_RGB32);
-    imageC = QImage(800, 600, QImage::Format_RGB32);
-    paintScatter(100,imageA,imageB,imageC);
-    QPixmap pix;
-    pix = QPixmap::fromImage(imageA);
-    label->setPixmap(pix);
-    label->setScaledContents(true);
-    QPixmap pix1;
-    pix1 = QPixmap::fromImage(imageB);
-    label1->setPixmap(pix1);
-    label1->setScaledContents(true); //令图片显示在label中
+    proIndex = 1;
+    paras.clear();
+    QString str = ui->txt2_1->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt2_2->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt2_3->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt2_4->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt2_5->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt2_6->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt2_7->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt2_8->text();
+    foot = str.toInt();
+
+    str = ui->txt2_9->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt2_10->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt2_11->text();
+    paras.append(str.toFloat());
+
+    ui->Slider->setMaximum(foot);
 }
 
-void QWCalSoftware::on_horizontalSlider_valueChanged(int value)
+
+void QWCalSoftware::on_btnLoad3_clicked()
+{
+    proIndex = 2;
+    paras.clear();
+    QString str = ui->txt3_1->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt3_2->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt3_3->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt3_4->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt3_5->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt3_6->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt3_7->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt3_8->text();
+    foot = str.toInt();
+
+    str = ui->txt3_9->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt3_10->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt3_11->text();
+    paras.append(str.toFloat());
+
+    ui->Slider->setMaximum(foot);
+}
+
+
+void QWCalSoftware::on_btnLoad4_clicked()
+{
+    proIndex = 3;
+    paras.clear();
+    QString str = ui->txt4_1->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt4_2->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt4_3->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt4_4->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt4_5->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt4_6->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt4_7->text();
+    foot = str.toInt();
+
+    str = ui->txt4_8->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt4_9->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt4_10->text();
+    paras.append(str.toFloat());
+
+    ui->Slider->setMaximum(foot);
+}
+
+
+void QWCalSoftware::on_btnMenu_Min_clicked()
+{
+    showMinimized();
+}
+
+
+void QWCalSoftware::on_btnMenu_Max_clicked()
+{
+    static bool max = false;
+    static QRect location = this->geometry();
+
+    if (max) {
+        this->setGeometry(location);
+    } else {
+        location = this->geometry();
+        this->setGeometry(QUIHelper::getScreenRect());
+    }
+
+    this->setProperty("canMove", max);
+    max = !max;
+}
+
+
+void QWCalSoftware::on_btnMenu_Close_clicked()
+{
+    close();
+}
+
+
+void QWCalSoftware::on_Slider_valueChanged(int value)//未完成
 {
     num = value;
-    fLabCurFile->setText("当前荷载步："+QString::number(num));
-    if(tag1=1)
+    ui->labFoot2->setText(QString::number(num));
+
+    paintScatter(value);
+    QPixmap pix;
+    QGraphicsScene *scn = new QGraphicsScene;
+
+//    QLabel labView = new QLabel(this);
+//    labView->setAlignment(Qt::AlignCenter);
+//    QRect loc = ui->graphicsView->geometry();
+//    int xView = loc.x(), yView = loc.y(), wView = loc.width(), hView = loc.height();
+//    labView->setGeometry(xView + wView/8, yView + hView/8, wView*0.75, hView*0.75);
+
+    if(ui->tbtnShow1->isChecked())
     {
-        paintScatter(value,imageA,imageB,imageC);
-        QPixmap pix;
-        pix = QPixmap::fromImage(imageA);
-        label->setPixmap(pix);
-        label->setScaledContents(true);
-        if(tag2==0)
-        {
-            QPixmap pix1;
-            pix1 = QPixmap::fromImage(imageB);
-            label1->setPixmap(pix1);
-            label1->setScaledContents(true);
-        }
-        else if(tag2==1)
-        {
-            QPixmap pix1;
-            pix1 = QPixmap::fromImage(imageC);
-            label1->setPixmap(pix1);
-            label1->setScaledContents(true);
-        }
-    } //value改变时，更换图片
-}
-
-
-void QWCalSoftware::on_pushButton_2_clicked()
-{
-    if(proIndex==0)calGMPPD();
-    if(proIndex==1)calEdgeDmg();
-    if(proIndex==2)calCtDmg();
-    if(proIndex==3)calLBoard(); //根据选择算例不同进行计算
-}
-
-
-void QWCalSoftware::on_radioButton_clicked(bool checked)
-{
-    if(checked)
-    {
-        tag2=1;
-        QPixmap pix;
-        pix = QPixmap::fromImage(imageC);
-        label1->setPixmap(pix);
-        label1->setScaledContents(true);
+        pix = QPixmap::fromImage(img2);
+//        labView->setPixmap(pix);
+//        labView->setScaledContents(true);
+    }else if(ui->tbtnShow2->isChecked()){
+        pix = QPixmap::fromImage(img3);
+//        labView->setPixmap(pix);
+//        labView->setScaledContents(true);
+    }else if(ui->tbtnShow3->isChecked()){
+        pix = QPixmap::fromImage(img1);
+//        labView->setPixmap(pix);
+//        labView->setScaledContents(true);
     }
-    else if(!checked)
-    {
-        tag2=0;
-        QPixmap pix;
-        pix = QPixmap::fromImage(imageB);
-        label1->setPixmap(pix);
-        label1->setScaledContents(true);
-    }
+
+    QGraphicsPixmapItem *p = scn->addPixmap(pix);
+    ui->View->setScene(scn);
+    ui->View->fitInView((QGraphicsItem*)p, Qt::IgnoreAspectRatio);
+    ui->View->show();
 }
 

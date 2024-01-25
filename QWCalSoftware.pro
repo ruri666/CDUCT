@@ -8,30 +8,24 @@ CONFIG += c++17
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+TARGET      = QWCalSoftware
+TEMPLATE    = app
+
 SOURCES += \
     main.cpp \
     qwcalsoftware.cpp \
-    qwparainput.cpp \
-    qwparainput2.cpp \
-    qwparainput3.cpp \
-    qwparainput4.cpp \
-    qwparainput5.cpp
 
 HEADERS += \
+    head.h \
     qwcalsoftware.h \
-    qwparainput.h \
-    qwparainput2.h \
-    qwparainput3.h \
-    qwparainput4.h \
-    qwparainput5.h
 
 FORMS += \
     qwcalsoftware.ui \
-    qwparainput.ui \
-    qwparainput2.ui \
-    qwparainput3.ui \
-    qwparainput4.ui \
-    qwparainput5.ui
+
+HEADERS += head.h
+UI_DIR=./UI
+
+RESOURCES   += $$PWD/../core_qss/qss.qrc
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -42,3 +36,6 @@ RESOURCES += \
     src.qrc
 
 INCLUDEPATH += D:\7777777\Software\eigen-3.4.0
+INCLUDEPATH += $$PWD
+INCLUDEPATH += $$PWD/../core_base
+include ($$PWD/../core_base/core_base.pri)

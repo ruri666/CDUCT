@@ -253,12 +253,14 @@ Makefile: QWCalSoftware.pro D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/win
 		D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/toolchain.prf \
 		D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/default_pre.prf \
 		D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/win32/default_pre.prf \
+		../core_base/h3.pri \
+		../core_base/core_base.pri \
 		D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/resolve_config.prf \
 		D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/exclusive_builds_post.prf \
 		D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/default_post.prf \
+		D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/warn_off.prf \
 		D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/qml_debug.prf \
 		D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/precompile_header.prf \
-		D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/warn_on.prf \
 		D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/qt.prf \
 		D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/resources_functions.prf \
 		D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/resources.prf \
@@ -276,10 +278,15 @@ Makefile: QWCalSoftware.pro D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/win
 		D:/7777777/Software/Qt/5.15.2/mingw81_64/lib/Qt5PrintSupport.prl \
 		D:/7777777/Software/Qt/5.15.2/mingw81_64/lib/Qt5Widgets.prl \
 		D:/7777777/Software/Qt/5.15.2/mingw81_64/lib/Qt5Gui.prl \
+		D:/7777777/Software/Qt/5.15.2/mingw81_64/lib/Qt5Network.prl \
 		D:/7777777/Software/Qt/5.15.2/mingw81_64/lib/Qt5Core.prl \
 		D:/7777777/Software/Qt/5.15.2/mingw81_64/lib/qtmain.prl \
 		D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/build_pass.prf \
-		src.qrc
+		../core_qss/qss.qrc \
+		src.qrc \
+		../core_base/qrc/image.qrc \
+		../core_base/qrc/qm.qrc \
+		../core_base/qrc/font.qrc
 	$(QMAKE) -o Makefile QWCalSoftware.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
 D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/spec_pre.prf:
 D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/qdevice.pri:
@@ -464,12 +471,14 @@ D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/exclusive_builds.prf:
 D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/toolchain.prf:
 D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/default_pre.prf:
 D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/win32/default_pre.prf:
+../core_base/h3.pri:
+../core_base/core_base.pri:
 D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/resolve_config.prf:
 D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/exclusive_builds_post.prf:
 D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/default_post.prf:
+D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/warn_off.prf:
 D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/qml_debug.prf:
 D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/precompile_header.prf:
-D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/warn_on.prf:
 D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/qt.prf:
 D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/resources_functions.prf:
 D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/resources.prf:
@@ -487,10 +496,15 @@ QWCalSoftware.pro:
 D:/7777777/Software/Qt/5.15.2/mingw81_64/lib/Qt5PrintSupport.prl:
 D:/7777777/Software/Qt/5.15.2/mingw81_64/lib/Qt5Widgets.prl:
 D:/7777777/Software/Qt/5.15.2/mingw81_64/lib/Qt5Gui.prl:
+D:/7777777/Software/Qt/5.15.2/mingw81_64/lib/Qt5Network.prl:
 D:/7777777/Software/Qt/5.15.2/mingw81_64/lib/Qt5Core.prl:
 D:/7777777/Software/Qt/5.15.2/mingw81_64/lib/qtmain.prl:
 D:/7777777/Software/Qt/5.15.2/mingw81_64/mkspecs/features/build_pass.prf:
+../core_qss/qss.qrc:
 src.qrc:
+../core_base/qrc/image.qrc:
+../core_base/qrc/qm.qrc:
+../core_base/qrc/font.qrc:
 qmake: FORCE
 	@$(QMAKE) -o Makefile QWCalSoftware.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
 
