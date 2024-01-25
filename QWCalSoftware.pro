@@ -25,7 +25,7 @@ FORMS += \
 HEADERS += head.h
 UI_DIR=./UI
 
-RESOURCES   += $$PWD/../core_qss/qss.qrc
+RESOURCES   += $$PWD/core_qss/qss.qrc
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -37,5 +37,5 @@ RESOURCES += \
 
 INCLUDEPATH += D:\7777777\Software\eigen-3.4.0
 INCLUDEPATH += $$PWD
-INCLUDEPATH += $$PWD/../core_base
-include ($$PWD/../core_base/core_base.pri)
+INCLUDEPATH += $$PWD/core_base
+include ($$PWD/core_base/core_base.pri)
