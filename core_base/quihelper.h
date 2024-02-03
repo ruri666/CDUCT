@@ -16,6 +16,7 @@ public:
     //获取桌面宽度高度+居中显示
     static int deskWidth();
     static int deskHeight();
+    static void setFormProper(QWidget *form);
     static QSize deskSize();
 
     //居中显示窗体

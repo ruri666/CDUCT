@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>QWCalSoftware</class>
  <widget class="QMainWindow" name="QWCalSoftware">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1131</width>
+    <height>692</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>固体连续-非连续变形统一模拟软件</string>
   </property>
@@ -85,7 +93,7 @@
             </property>
             <property name="icon">
              <iconset resource="src.qrc">
-              <normaloff>:/imgs/imgs/txt.png</normaloff>:/imgs/imgs/txt.png</iconset>
+              <normaloff>:/imgs/imgs/play.png</normaloff>:/imgs/imgs/play.png</iconset>
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
@@ -125,7 +133,7 @@
             </property>
             <property name="icon">
              <iconset resource="src.qrc">
-              <normaloff>:/imgs/imgs/smile1.png</normaloff>:/imgs/imgs/smile1.png</iconset>
+              <normaloff>:/imgs/imgs/play.png</normaloff>:/imgs/imgs/play.png</iconset>
             </property>
             <property name="checked">
              <bool>false</bool>
@@ -289,7 +297,7 @@
        <enum>QFrame::Raised</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page1">
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -406,7 +414,7 @@
            <enum>QFrame::Raised</enum>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="Page1_1">
            <layout class="QGridLayout" name="gridLayout">
@@ -803,6 +811,13 @@
                        </property>
                       </widget>
                      </item>
+                     <item>
+                      <widget class="QLabel" name="lab1_12">
+                       <property name="text">
+                        <string>能量释放率G_0</string>
+                       </property>
+                      </widget>
+                     </item>
                     </layout>
                    </widget>
                   </item>
@@ -845,6 +860,19 @@
                        </property>
                        <property name="text">
                         <string>8000</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLineEdit" name="txt1_12">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="text">
+                        <string>1000</string>
                        </property>
                       </widget>
                      </item>
@@ -922,6 +950,19 @@
                        </property>
                       </widget>
                      </item>
+                     <item>
+                      <widget class="QLabel" name="lab2_12">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="text">
+                        <string>能量释放率G_0</string>
+                       </property>
+                      </widget>
+                     </item>
                     </layout>
                    </widget>
                   </item>
@@ -964,6 +1005,19 @@
                        </property>
                        <property name="text">
                         <string>8000</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLineEdit" name="txt2_12">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="text">
+                        <string>1000</string>
                        </property>
                       </widget>
                      </item>
@@ -1429,6 +1483,13 @@
                        </property>
                       </widget>
                      </item>
+                     <item>
+                      <widget class="QLabel" name="lab3_12">
+                       <property name="text">
+                        <string>能量释放率G_0</string>
+                       </property>
+                      </widget>
+                     </item>
                     </layout>
                    </widget>
                   </item>
@@ -1471,6 +1532,19 @@
                        </property>
                        <property name="text">
                         <string>8000</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLineEdit" name="txt3_12">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="text">
+                        <string>1000</string>
                        </property>
                       </widget>
                      </item>
@@ -2204,6 +2278,13 @@
                        </property>
                       </widget>
                      </item>
+                     <item>
+                      <widget class="QLabel" name="lab4_11">
+                       <property name="text">
+                        <string>能量释放率G_0</string>
+                       </property>
+                      </widget>
+                     </item>
                     </layout>
                    </widget>
                   </item>
@@ -2246,6 +2327,19 @@
                        </property>
                        <property name="text">
                         <string>8000</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLineEdit" name="txt4_11">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="text">
+                        <string>65</string>
                        </property>
                       </widget>
                      </item>
@@ -2345,7 +2439,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="" native="true">
+         <widget class="QWidget" name="widget" native="true">
           <property name="minimumSize">
            <size>
             <width>0</width>

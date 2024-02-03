@@ -118,11 +118,13 @@ public:
     QLabel *lab1_1;
     QLabel *lab1_2;
     QLabel *lab1_3;
+    QLabel *lab1_12;
     QWidget *widget8;
     QVBoxLayout *verticalLayout_6;
     QLineEdit *txt1_1;
     QLineEdit *txt1_2;
     QLineEdit *txt1_3;
+    QLineEdit *txt1_12;
     QWidget *page1_2;
     QGridLayout *gridLayout_3;
     QGroupBox *box2_1;
@@ -134,11 +136,13 @@ public:
     QLabel *lab2_1;
     QLabel *lab2_2;
     QLabel *lab2_3;
+    QLabel *lab2_12;
     QWidget *widget10;
     QVBoxLayout *verticalLayout_13;
     QLineEdit *txt2_1;
     QLineEdit *txt2_2;
     QLineEdit *txt2_3;
+    QLineEdit *txt2_12;
     QGroupBox *box2_2;
     QVBoxLayout *verticalLayout_16;
     QWidget *widget_9;
@@ -195,11 +199,13 @@ public:
     QLabel *lab3_1;
     QLabel *lab3_2;
     QLabel *lab3_3;
+    QLabel *lab3_12;
     QWidget *widget19;
     QVBoxLayout *verticalLayout_21;
     QLineEdit *txt3_1;
     QLineEdit *txt3_2;
     QLineEdit *txt3_3;
+    QLineEdit *txt3_12;
     QGroupBox *box3_2;
     QHBoxLayout *horizontalLayout_32;
     QWidget *widget_13;
@@ -299,11 +305,13 @@ public:
     QLabel *lab4_1;
     QLabel *lab4_2;
     QLabel *lab4_3;
+    QLabel *lab4_11;
     QWidget *widget33;
     QVBoxLayout *verticalLayout_29;
     QLineEdit *txt4_1;
     QLineEdit *txt4_2;
     QLineEdit *txt4_3;
+    QLineEdit *txt4_11;
     QWidget *page2;
     QHBoxLayout *horizontalLayout_33;
     QWidget *widgetLeftCal;
@@ -335,6 +343,7 @@ public:
     {
         if (QWCalSoftware->objectName().isEmpty())
             QWCalSoftware->setObjectName(QString::fromUtf8("QWCalSoftware"));
+        QWCalSoftware->resize(1131, 692);
         centralwidget = new QWidget(QWCalSoftware);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         verticalLayout = new QVBoxLayout(centralwidget);
@@ -783,6 +792,11 @@ public:
 
         verticalLayout_5->addWidget(lab1_3);
 
+        lab1_12 = new QLabel(widget7);
+        lab1_12->setObjectName(QString::fromUtf8("lab1_12"));
+
+        verticalLayout_5->addWidget(lab1_12);
+
 
         horizontalLayout_5->addWidget(widget7);
 
@@ -810,6 +824,13 @@ public:
         txt1_3->setSizePolicy(sizePolicy4);
 
         verticalLayout_6->addWidget(txt1_3);
+
+        txt1_12 = new QLineEdit(widget8);
+        txt1_12->setObjectName(QString::fromUtf8("txt1_12"));
+        sizePolicy4.setHeightForWidth(txt1_12->sizePolicy().hasHeightForWidth());
+        txt1_12->setSizePolicy(sizePolicy4);
+
+        verticalLayout_6->addWidget(txt1_12);
 
 
         horizontalLayout_5->addWidget(widget8);
@@ -865,6 +886,13 @@ public:
 
         verticalLayout_12->addWidget(lab2_3);
 
+        lab2_12 = new QLabel(widget9);
+        lab2_12->setObjectName(QString::fromUtf8("lab2_12"));
+        sizePolicy5.setHeightForWidth(lab2_12->sizePolicy().hasHeightForWidth());
+        lab2_12->setSizePolicy(sizePolicy5);
+
+        verticalLayout_12->addWidget(lab2_12);
+
 
         horizontalLayout_14->addWidget(widget9);
 
@@ -892,6 +920,13 @@ public:
         txt2_3->setSizePolicy(sizePolicy4);
 
         verticalLayout_13->addWidget(txt2_3);
+
+        txt2_12 = new QLineEdit(widget10);
+        txt2_12->setObjectName(QString::fromUtf8("txt2_12"));
+        sizePolicy4.setHeightForWidth(txt2_12->sizePolicy().hasHeightForWidth());
+        txt2_12->setSizePolicy(sizePolicy4);
+
+        verticalLayout_13->addWidget(txt2_12);
 
 
         horizontalLayout_14->addWidget(widget10);
@@ -1167,6 +1202,11 @@ public:
 
         verticalLayout_20->addWidget(lab3_3);
 
+        lab3_12 = new QLabel(widget18);
+        lab3_12->setObjectName(QString::fromUtf8("lab3_12"));
+
+        verticalLayout_20->addWidget(lab3_12);
+
 
         horizontalLayout_21->addWidget(widget18);
 
@@ -1194,6 +1234,13 @@ public:
         txt3_3->setSizePolicy(sizePolicy4);
 
         verticalLayout_21->addWidget(txt3_3);
+
+        txt3_12 = new QLineEdit(widget19);
+        txt3_12->setObjectName(QString::fromUtf8("txt3_12"));
+        sizePolicy4.setHeightForWidth(txt3_12->sizePolicy().hasHeightForWidth());
+        txt3_12->setSizePolicy(sizePolicy4);
+
+        verticalLayout_21->addWidget(txt3_12);
 
 
         horizontalLayout_21->addWidget(widget19);
@@ -1651,6 +1698,11 @@ public:
 
         verticalLayout_28->addWidget(lab4_3);
 
+        lab4_11 = new QLabel(widget32);
+        lab4_11->setObjectName(QString::fromUtf8("lab4_11"));
+
+        verticalLayout_28->addWidget(lab4_11);
+
 
         horizontalLayout_28->addWidget(widget32);
 
@@ -1678,6 +1730,13 @@ public:
         txt4_3->setSizePolicy(sizePolicy4);
 
         verticalLayout_29->addWidget(txt4_3);
+
+        txt4_11 = new QLineEdit(widget33);
+        txt4_11->setObjectName(QString::fromUtf8("txt4_11"));
+        sizePolicy4.setHeightForWidth(txt4_11->sizePolicy().hasHeightForWidth());
+        txt4_11->setSizePolicy(sizePolicy4);
+
+        verticalLayout_29->addWidget(txt4_11);
 
 
         horizontalLayout_28->addWidget(widget33);
@@ -1841,8 +1900,8 @@ public:
 
         retranslateUi(QWCalSoftware);
 
-        stackedWidget->setCurrentIndex(2);
-        stackedWidgetIn->setCurrentIndex(3);
+        stackedWidget->setCurrentIndex(0);
+        stackedWidgetIn->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(QWCalSoftware);
@@ -1894,16 +1953,20 @@ public:
         lab1_1->setText(QCoreApplication::translate("QWCalSoftware", "\345\274\271\346\200\247\346\250\241\345\236\213\351\207\217E(Pa)", nullptr));
         lab1_2->setText(QCoreApplication::translate("QWCalSoftware", "\346\263\212\346\235\276\346\257\224n", nullptr));
         lab1_3->setText(QCoreApplication::translate("QWCalSoftware", "\345\257\206\345\272\246(Kg/m3)", nullptr));
+        lab1_12->setText(QCoreApplication::translate("QWCalSoftware", "\350\203\275\351\207\217\351\207\212\346\224\276\347\216\207G_0", nullptr));
         txt1_1->setText(QCoreApplication::translate("QWCalSoftware", "192.0e9", nullptr));
         txt1_2->setText(QCoreApplication::translate("QWCalSoftware", "0.3", nullptr));
         txt1_3->setText(QCoreApplication::translate("QWCalSoftware", "8000", nullptr));
+        txt1_12->setText(QCoreApplication::translate("QWCalSoftware", "1000", nullptr));
         box2_1->setTitle(QCoreApplication::translate("QWCalSoftware", "\347\211\251\347\220\206\345\217\202\346\225\260", nullptr));
         lab2_1->setText(QCoreApplication::translate("QWCalSoftware", "\345\274\271\346\200\247\346\250\241\345\236\213\351\207\217E(Pa)", nullptr));
         lab2_2->setText(QCoreApplication::translate("QWCalSoftware", "\346\263\212\346\235\276\346\257\224n", nullptr));
         lab2_3->setText(QCoreApplication::translate("QWCalSoftware", "\345\257\206\345\272\246(Kg/m3)", nullptr));
+        lab2_12->setText(QCoreApplication::translate("QWCalSoftware", "\350\203\275\351\207\217\351\207\212\346\224\276\347\216\207G_0", nullptr));
         txt2_1->setText(QCoreApplication::translate("QWCalSoftware", "192.0e9", nullptr));
         txt2_2->setText(QCoreApplication::translate("QWCalSoftware", "0.3", nullptr));
         txt2_3->setText(QCoreApplication::translate("QWCalSoftware", "8000", nullptr));
+        txt2_12->setText(QCoreApplication::translate("QWCalSoftware", "1000", nullptr));
         box2_2->setTitle(QCoreApplication::translate("QWCalSoftware", "\345\207\240\344\275\225\345\217\202\346\225\260", nullptr));
         lab2_4->setText(QCoreApplication::translate("QWCalSoftware", "\350\257\225\344\273\266\351\225\277\345\272\246L(m)", nullptr));
         lab2_5->setText(QCoreApplication::translate("QWCalSoftware", "\350\257\225\344\273\266\345\256\275\345\272\246W(m)", nullptr));
@@ -1928,9 +1991,11 @@ public:
         lab3_1->setText(QCoreApplication::translate("QWCalSoftware", "\345\274\271\346\200\247\346\250\241\345\236\213\351\207\217E(Pa)", nullptr));
         lab3_2->setText(QCoreApplication::translate("QWCalSoftware", "\346\263\212\346\235\276\346\257\224n", nullptr));
         lab3_3->setText(QCoreApplication::translate("QWCalSoftware", "\345\257\206\345\272\246(Kg/m3)", nullptr));
+        lab3_12->setText(QCoreApplication::translate("QWCalSoftware", "\350\203\275\351\207\217\351\207\212\346\224\276\347\216\207G_0", nullptr));
         txt3_1->setText(QCoreApplication::translate("QWCalSoftware", "192.0e9", nullptr));
         txt3_2->setText(QCoreApplication::translate("QWCalSoftware", "0.3", nullptr));
         txt3_3->setText(QCoreApplication::translate("QWCalSoftware", "8000", nullptr));
+        txt3_12->setText(QCoreApplication::translate("QWCalSoftware", "1000", nullptr));
         box3_2->setTitle(QCoreApplication::translate("QWCalSoftware", "\345\207\240\344\275\225\345\217\202\346\225\260", nullptr));
         lab3_4->setText(QCoreApplication::translate("QWCalSoftware", "\350\257\225\344\273\266\351\225\277\345\272\246L(m)", nullptr));
         lab3_5->setText(QCoreApplication::translate("QWCalSoftware", "\350\257\225\344\273\266\345\256\275\345\272\246W(m)", nullptr));
@@ -1973,9 +2038,11 @@ public:
         lab4_1->setText(QCoreApplication::translate("QWCalSoftware", "\345\274\271\346\200\247\346\250\241\345\236\213\351\207\217E(Pa)", nullptr));
         lab4_2->setText(QCoreApplication::translate("QWCalSoftware", "\346\263\212\346\235\276\346\257\224n", nullptr));
         lab4_3->setText(QCoreApplication::translate("QWCalSoftware", "\345\257\206\345\272\246(Kg/m3)", nullptr));
+        lab4_11->setText(QCoreApplication::translate("QWCalSoftware", "\350\203\275\351\207\217\351\207\212\346\224\276\347\216\207G_0", nullptr));
         txt4_1->setText(QCoreApplication::translate("QWCalSoftware", "192.0e9", nullptr));
         txt4_2->setText(QCoreApplication::translate("QWCalSoftware", "0.3", nullptr));
         txt4_3->setText(QCoreApplication::translate("QWCalSoftware", "8000", nullptr));
+        txt4_11->setText(QCoreApplication::translate("QWCalSoftware", "65", nullptr));
         tbtnCal1->setText(QCoreApplication::translate("QWCalSoftware", "\351\200\211\346\213\251\345\255\230\345\202\250\350\267\257\345\276\204", nullptr));
         tbtnCal2->setText(QCoreApplication::translate("QWCalSoftware", "\345\274\200\345\247\213\350\256\241\347\256\227", nullptr));
         labPcs->setText(QString());

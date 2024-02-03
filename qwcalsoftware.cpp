@@ -47,9 +47,10 @@ void QWCalSoftware::initForm()
 {
     //设置无边框
     QUIHelper::setFramelessForm(this);
-//    setWindowState(Qt::WindowMaximized);
+    QUIHelper::setFormProper(this);
+//    QUIHelper::setFormInCenter(this);
     //设置图标
-    IconHelper::setIcon(ui->labIco, 0xf073, 30);
+//    IconHelper::setIcon(ui->labIco, 0xf073, 30);
     IconHelper::setIcon(ui->btnMenu_Min, 0xf068);
     IconHelper::setIcon(ui->btnMenu_Max, 0xf067);
     IconHelper::setIcon(ui->btnMenu_Close, 0xf00d);
@@ -362,7 +363,7 @@ void QWCalSoftware::calGMPPD()
 //    double emod = 192.0e9;
     double emod = paras[0];
     //临界能量释放率
-    double G0 = 1000.0;
+    double G0 = paras[10];
     //泊松比
 //    double pratio = 0.3;
     double pratio = paras[1];
@@ -759,7 +760,7 @@ void QWCalSoftware::calEdgeDmg()
     //    double emod = 192.0e9;
     double emod = paras[0];
     //临界能量释放率
-    double G0 = 1000.0;
+    double G0 = paras[10];
     //泊松比
     //    double pratio = 0.3;
     double pratio = paras[1];
@@ -1151,7 +1152,7 @@ void QWCalSoftware::calCtDmg()
     //    double emod = 192.0e9;
     double emod = paras[0];
     //临界能量释放率
-    double G0 = 1000.0;
+    double G0 = paras[10];
     //泊松比
     //    double pratio = 0.3;
     double pratio = paras[1];
@@ -1542,7 +1543,7 @@ void QWCalSoftware::calLBoard()
     double emod = paras[0];
 //    double emod = 25.85e9;
     //临界能量释放率
-    double G0 = 65.0;
+    double G0 = paras[9];
     //泊松比 0.18，键型可以么？
     double pratio = paras[1];
 //    double pratio = 0.3;
@@ -2435,6 +2436,9 @@ void QWCalSoftware::on_btnLoad1_clicked()
     str = ui->txt1_11->text();
     paras.append(str.toFloat());
 
+    str = ui->txt1_12->text();
+    paras.append(str.toFloat());
+
     ui->Slider->setMaximum(foot);
 }
 
@@ -2474,6 +2478,9 @@ void QWCalSoftware::on_btnLoad2_clicked()
     paras.append(str.toFloat());
 
     str = ui->txt2_11->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt2_12->text();
     paras.append(str.toFloat());
 
     ui->Slider->setMaximum(foot);
@@ -2517,6 +2524,9 @@ void QWCalSoftware::on_btnLoad3_clicked()
     str = ui->txt3_11->text();
     paras.append(str.toFloat());
 
+    str = ui->txt3_12->text();
+    paras.append(str.toFloat());
+
     ui->Slider->setMaximum(foot);
 }
 
@@ -2553,6 +2563,9 @@ void QWCalSoftware::on_btnLoad4_clicked()
     paras.append(str.toFloat());
 
     str = ui->txt4_10->text();
+    paras.append(str.toFloat());
+
+    str = ui->txt4_11->text();
     paras.append(str.toFloat());
 
     ui->Slider->setMaximum(foot);
