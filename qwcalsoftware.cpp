@@ -1,4 +1,4 @@
-#pragma execution_character_set("utf-8")
+﻿#pragma execution_character_set("utf-8")
 
 #include "qwcalsoftware.h"
 #include "ui_qwcalsoftware.h"
@@ -47,10 +47,9 @@ void QWCalSoftware::initForm()
 {
     //设置无边框
     QUIHelper::setFramelessForm(this);
-    QUIHelper::setFormProper(this);
-//    QUIHelper::setFormInCenter(this);
+//    setWindowState(Qt::WindowMaximized);
     //设置图标
-//    IconHelper::setIcon(ui->labIco, 0xf073, 30);
+    IconHelper::setIcon(ui->labIco, 0xf073, 30);
     IconHelper::setIcon(ui->btnMenu_Min, 0xf068);
     IconHelper::setIcon(ui->btnMenu_Max, 0xf067);
     IconHelper::setIcon(ui->btnMenu_Close, 0xf00d);
@@ -124,16 +123,19 @@ void QWCalSoftware::buttonClick()
     foreach (QAbstractButton *btn, btns) {
         btn->setChecked(btn == b);
     }
-
     if (name == "结构建模") {
         ui->stackedWidget->setCurrentIndex(0);
-    } else if (name == "结构计算") {
-        ui->stackedWidget->setCurrentIndex(1);
-        ui->labPcs->setText("");
-    } else if (name == "后处理") {
-        ui->stackedWidget->setCurrentIndex(2);
-        ui->Slider->setValue(1);
-    } else if (name == "用户退出") {
+        b->setEnabled(false); // 禁用点击的按钮
+    }
+    else if (name == "结构计算") {
+        //ui->stackedWidget->setCurrentIndex(1);
+        //ui->labPcs->setText("");
+    }
+    else if (name == "后处理") {
+        //ui->stackedWidget->setCurrentIndex(2);
+        //ui->Slider->setValue(1);
+    }
+    else if (name == "用户退出") {
         exit(0);
     }
 }
@@ -258,29 +260,40 @@ void QWCalSoftware::leftRoadClick()
     filePath = QFileDialog::getExistingDirectory(this, "选择vtk文件存储路径", "");
     std::cout << "#######################";
     qDebug() << filePath << endl;
+    if(filePath!= ""){
+        b->setEnabled(false); // 禁用点击的按钮
+        IfPathChoose = true;
+    }
+
 }
 
 void QWCalSoftware::leftCalClick()
 {
     QToolButton *b = (QToolButton *)sender();
-
-    int count = btnsCal.count();
-    for (int i = 0; i < count; ++i) {
-        QAbstractButton *btn = btnsCal.at(i);
-        btn->setChecked(btn == b);
+    if(IfPathChoose){
+        int count = btnsCal.count();
+        for (int i = 0; i < count; ++i) {
+            QAbstractButton *btn = btnsCal.at(i);
+            btn->setChecked(btn == b);
+        }
+        ui->labPcs->setText("当前项目：正在计算中");
+        switch (proIndex)
+        {
+        case 0:
+            calGMPPD();
+            break;
+        case 1:
+            calEdgeDmg();
+            break;
+        case 2:
+            calCtDmg();
+            break;
+        case 3:
+            calLBoard();
+            break;
+        }
     }
 
-    ui->labPcs->setText("当前项目：正在计算中");
-
-    if (proIndex == 0) {
-        calGMPPD();
-    } else if (proIndex == 1) {
-        calEdgeDmg();
-    } else if (proIndex == 2) {
-        calCtDmg();
-    } else if (proIndex == 3) {
-        calLBoard();
-    }
 }
 
 void QWCalSoftware::leftShowClick()//未完成
@@ -363,7 +376,7 @@ void QWCalSoftware::calGMPPD()
 //    double emod = 192.0e9;
     double emod = paras[0];
     //临界能量释放率
-    double G0 = paras[10];
+    double G0 = 1000.0;
     //泊松比
 //    double pratio = 0.3;
     double pratio = paras[1];
@@ -564,6 +577,13 @@ void QWCalSoftware::calGMPPD()
 
     std::cout << "参数设置完毕！" << std::endl;
 
+
+    QProgressDialog progressWindow;
+    progressWindow.setWindowTitle("计算进度");
+    progressWindow.setLabelText("正在计算...");
+    progressWindow.setRange(0, foot); // 设置进度条范围
+    progressWindow.setCancelButton(NULL);
+
         //开始施加荷载步
         std::cout << "计算开始！" << std::endl;
         for (int tt = 1; tt <= nt; tt = tt + 1)
@@ -662,7 +682,7 @@ void QWCalSoftware::calGMPPD()
         std::string filename = filePath.toStdString() + "/GMPPD_";
         filename = filename + std::to_string(tt) + ".vtk";
         std::ofstream outfile;
-        outfile.open(filename);
+        outfile.open(filename, ios::out);
         outfile << "# vtk DataFile Version 3.0" << std::endl;
         outfile << "L_shape_plate_crack" << std::endl;
         outfile << "ASCII" << std::endl;
@@ -700,10 +720,12 @@ void QWCalSoftware::calGMPPD()
         }
         outfile.close();
         //后处理结束
+        progressWindow.setValue(tt);
+        QApplication::processEvents(); // 保持 UI 响应
     }
 //    double  end = GetTickCount64();
-    ui->labPcs->setText("当前项目：已计算完毕");
-
+    progressWindow.close();
+    EndForCal();
     return;
 }
 
@@ -760,7 +782,7 @@ void QWCalSoftware::calEdgeDmg()
     //    double emod = 192.0e9;
     double emod = paras[0];
     //临界能量释放率
-    double G0 = paras[10];
+    double G0 = 1000.0;
     //泊松比
     //    double pratio = 0.3;
     double pratio = paras[1];
@@ -959,7 +981,11 @@ void QWCalSoftware::calEdgeDmg()
     Eigen::VectorXd damage = Eigen::VectorXd::Zero(totnode);
 
     std::cout << "参数设置完毕！" << std::endl;
-
+    QProgressDialog progressWindow;
+    progressWindow.setWindowTitle("计算进度");
+    progressWindow.setLabelText("正在计算...");
+    progressWindow.setRange(0, foot); // 设置进度条范围
+    progressWindow.setCancelButton(NULL);
         //开始施加荷载步
         std::cout << "计算开始！" << std::endl;
         for (int tt = 1; tt <= nt; tt = tt + 1)
@@ -1055,10 +1081,10 @@ void QWCalSoftware::calEdgeDmg()
         }
 
         //后处理输出到paraview
-        std::string filename = filePath.toStdString()+ "/GMPPD_";
+        std::string filename = filePath.toStdString()+ "/EdgeDmg_";
         filename = filename + std::to_string(tt) + ".vtk";
         std::ofstream outfile;
-        outfile.open(filename);
+        outfile.open(filename, ios::out);
         outfile << "# vtk DataFile Version 3.0" << std::endl;
         outfile << "L_shape_plate_crack" << std::endl;
         outfile << "ASCII" << std::endl;
@@ -1096,8 +1122,11 @@ void QWCalSoftware::calEdgeDmg()
         }
         outfile.close();
         //后处理结束
+        progressWindow.setValue(tt);
+        QApplication::processEvents(); // 保持 UI 响应
     }
-    ui->labPcs->setText("当前项目：已计算完毕");
+    progressWindow.close();
+    EndForCal();
 }
 
 void QWCalSoftware::calCtDmg()
@@ -1152,7 +1181,7 @@ void QWCalSoftware::calCtDmg()
     //    double emod = 192.0e9;
     double emod = paras[0];
     //临界能量释放率
-    double G0 = paras[10];
+    double G0 = 1000.0;
     //泊松比
     //    double pratio = 0.3;
     double pratio = paras[1];
@@ -1351,7 +1380,11 @@ void QWCalSoftware::calCtDmg()
     Eigen::VectorXd damage = Eigen::VectorXd::Zero(totnode);
 
     std::cout << "参数设置完毕！" << std::endl;
-
+    QProgressDialog progressWindow;
+    progressWindow.setWindowTitle("计算进度");
+    progressWindow.setLabelText("正在计算...");
+    progressWindow.setRange(0, foot); // 设置进度条范围
+    progressWindow.setCancelButton(NULL);
         //开始施加荷载步
         std::cout << "计算开始！" << std::endl;
         for (int tt = 1; tt <= nt; tt = tt + 1)
@@ -1447,10 +1480,10 @@ void QWCalSoftware::calCtDmg()
         }
 
         //后处理输出到paraview
-        std::string filename = filePath.toStdString() + "/GMPPD_";
+        std::string filename = filePath.toStdString() + "/CtDmg_";
         filename = filename + std::to_string(tt) + ".vtk";
         std::ofstream outfile;
-        outfile.open(filename);
+        outfile.open(filename, ios::out);
         outfile << "# vtk DataFile Version 3.0" << std::endl;
         outfile << "L_shape_plate_crack" << std::endl;
         outfile << "ASCII" << std::endl;
@@ -1488,8 +1521,12 @@ void QWCalSoftware::calCtDmg()
         }
         outfile.close();
         //后处理结束
+        progressWindow.setValue(tt);
+        QApplication::processEvents(); // 保持 UI 响应
     }
-    ui->labPcs->setText("当前项目：已计算完毕");
+    progressWindow.close();
+    EndForCal();
+    return;
 }
 
 void QWCalSoftware::calLBoard()
@@ -1543,7 +1580,7 @@ void QWCalSoftware::calLBoard()
     double emod = paras[0];
 //    double emod = 25.85e9;
     //临界能量释放率
-    double G0 = paras[9];
+    double G0 = 65.0;
     //泊松比 0.18，键型可以么？
     double pratio = paras[1];
 //    double pratio = 0.3;
@@ -1767,6 +1804,11 @@ void QWCalSoftware::calLBoard()
 
     std::cout << "参数设置完毕！" << std::endl;
 
+    QProgressDialog progressWindow;
+    progressWindow.setWindowTitle("计算进度");
+    progressWindow.setLabelText("正在计算...");
+    progressWindow.setRange(0, foot); // 设置进度条范围
+    progressWindow.setCancelButton(NULL);
         //开始施加荷载步
         std::cout << "计算开始！" << std::endl;
         for (int tt = 1; tt <= nt; tt = tt + 1)
@@ -1879,10 +1921,10 @@ void QWCalSoftware::calLBoard()
         }
 
         //后处理输出到paraview
-        std::string filename = filePath.toStdString() + "/GMPPD_";
+        std::string filename = filePath.toStdString() + "/LBoard_";
         filename = filename + std::to_string(tt) + ".vtk";
         std::ofstream outfile;
-        outfile.open(filename);
+        outfile.open(filename, ios::out);
         outfile << "# vtk DataFile Version 3.0" << std::endl;
         outfile << "L_shape_plate_crack" << std::endl;
         outfile << "ASCII" << std::endl;
@@ -1920,13 +1962,40 @@ void QWCalSoftware::calLBoard()
         }
         outfile.close();
         //后处理结束
+        progressWindow.setValue(tt);
+        QApplication::processEvents(); // 保持 UI 响应
     }
-    ui->labPcs->setText("当前项目：已计算完毕");
+    progressWindow.close();
+    EndForCal();
+    return;
+}
+
+/*计算步骤结尾自动跳转至后处理*/
+void QWCalSoftware::EndForCal()
+{
+    ui->stackedWidget->setCurrentIndex(2);
+    ui->Slider->setValue(1);
 }
 
 void QWCalSoftware::paintScatter(int n) //画图函数
 {
-    QString str1="/GMPPD_";
+
+    QString str1;
+    switch (proIndex)
+    {
+    case 0:
+        str1="/GMPPD_";
+        break;
+    case 1:
+        str1="/EdgeDmg_";
+        break;
+    case 2:
+        str1="/CtDmg_";
+        break;
+    case 3:
+        str1="/LBoard_";
+        break;
+    }
     QString str2=QString::number(n);
     QString str3=".vtk";
     QString filename = filePath+str1+str2+str3;
@@ -2436,10 +2505,9 @@ void QWCalSoftware::on_btnLoad1_clicked()
     str = ui->txt1_11->text();
     paras.append(str.toFloat());
 
-    str = ui->txt1_12->text();
-    paras.append(str.toFloat());
-
     ui->Slider->setMaximum(foot);
+    ui->stackedWidget->setCurrentIndex(1);
+    ui->labPcs->setText("");
 }
 
 
@@ -2480,10 +2548,9 @@ void QWCalSoftware::on_btnLoad2_clicked()
     str = ui->txt2_11->text();
     paras.append(str.toFloat());
 
-    str = ui->txt2_12->text();
-    paras.append(str.toFloat());
-
     ui->Slider->setMaximum(foot);
+    ui->stackedWidget->setCurrentIndex(1);
+    ui->labPcs->setText("");
 }
 
 
@@ -2524,10 +2591,9 @@ void QWCalSoftware::on_btnLoad3_clicked()
     str = ui->txt3_11->text();
     paras.append(str.toFloat());
 
-    str = ui->txt3_12->text();
-    paras.append(str.toFloat());
-
     ui->Slider->setMaximum(foot);
+    ui->stackedWidget->setCurrentIndex(1);
+    ui->labPcs->setText("");
 }
 
 
@@ -2565,10 +2631,9 @@ void QWCalSoftware::on_btnLoad4_clicked()
     str = ui->txt4_10->text();
     paras.append(str.toFloat());
 
-    str = ui->txt4_11->text();
-    paras.append(str.toFloat());
-
     ui->Slider->setMaximum(foot);
+    ui->stackedWidget->setCurrentIndex(1);
+    ui->labPcs->setText("");
 }
 
 

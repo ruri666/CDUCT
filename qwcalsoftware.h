@@ -1,9 +1,9 @@
-#ifndef QWCALSOFTWARE_H
+﻿#ifndef QWCALSOFTWARE_H
 #define QWCALSOFTWARE_H
 
 #include <QMainWindow>
 #include <QAbstractButton>
-
+#include <QProgressDialog> //进度条
 #include <iostream>
 #include <fstream>
 #include <Eigen/Eigen>
@@ -92,6 +92,7 @@ private:
     int num;
     int proIndex; //区分不同的算例的
     double w,l; //物质点间距
+    bool IfPathChoose = false;//判断有没有先选择文件路径
 
   private:
     void calGMPPD();
@@ -99,6 +100,6 @@ private:
     void calCtDmg();
     void calLBoard();
     void paintScatter(int n);
-
+    void EndForCal();
 };
 #endif // QWCALSOFTWARE_H
