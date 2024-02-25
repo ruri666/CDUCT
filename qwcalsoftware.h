@@ -14,6 +14,10 @@
 #include <cstdlib>
 #include <omp.h>
 #include <windows.h>
+#include <QMouseEvent>
+
+
+
 
 const double pi =  3.141592653589793;
 const double g = 9.80665;
@@ -24,13 +28,18 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class QWCalSoftware; }
 QT_END_NAMESPACE
 
+#define PADDING 2
+enum Direction { UP=0, DOWN=1, LEFT, RIGHT, LEFTTOP, LEFTBOTTOM, RIGHTBOTTOM, RIGHTTOP, NONE };//鼠标拖动窗口方向
+
 class QWCalSoftware : public QMainWindow
 {
     Q_OBJECT
 
+
 public:
     QWCalSoftware(QWidget *parent = nullptr);
     ~QWCalSoftware();
+    friend class information;
 
 private:
     QString borderColor;
@@ -86,6 +95,8 @@ private slots:
     void on_btnMenu_Close_clicked();
     void on_Slider_valueChanged(int value);
 
+    void on_tbtnShow4_clicked();
+
 private:
     Ui::QWCalSoftware *ui;
 
@@ -101,5 +112,14 @@ private:
     void calLBoard();
     void paintScatter(int n);
     void EndForCal();
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+
+    void mouseMoveEvent(QMouseEvent *event) override;
+
+private:
+    QPoint m_dragPosition;
+
 };
 #endif // QWCALSOFTWARE_H

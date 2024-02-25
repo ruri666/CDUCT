@@ -4,6 +4,8 @@
 #include "ui_qwcalsoftware.h"
 #include "iconhelper.h"
 #include "quihelper.h"
+#include "information.h"
+
 
 QWCalSoftware::QWCalSoftware(QWidget *parent)
     : QMainWindow(parent)
@@ -135,9 +137,6 @@ void QWCalSoftware::buttonClick()
         //ui->stackedWidget->setCurrentIndex(2);
         //ui->Slider->setValue(1);
     }
-    else if (name == "用户退出") {
-        exit(0);
-    }
 }
 
 void QWCalSoftware::initLeftCons()
@@ -201,7 +200,7 @@ void QWCalSoftware::initLeftCal()
 void QWCalSoftware::initLeftShow()
 {
     iconsShow << 0xf0a4 << 0xf25a << 0xf16e;
-    btnsShow << ui->tbtnShow1 << ui->tbtnShow2  << ui->tbtnShow3;
+    btnsShow << ui->tbtnShow1 << ui->tbtnShow2  << ui->tbtnShow3 << ui->tbtnShow4;
 
     int count = btnsShow.count();
     for (int i = 0; i < count; ++i) {
@@ -237,13 +236,17 @@ void QWCalSoftware::leftConsClick()
     }
 
     if (name == "巴西劈裂试验") {
-        ui->stackedWidgetIn->setCurrentIndex(0);
+        proIndex = 0;
+        ui->stackedWidgetIn->setCurrentIndex(proIndex);
     } else if (name == "单边缺口试件裂纹扩展试验") {
-        ui->stackedWidgetIn->setCurrentIndex(1);
+        proIndex = 1;
+        ui->stackedWidgetIn->setCurrentIndex(proIndex);
     } else if (name == "中心缺口试件裂纹扩展试验") {
-        ui->stackedWidgetIn->setCurrentIndex(2);
+        proIndex = 2;
+        ui->stackedWidgetIn->setCurrentIndex(proIndex);
     } else if (name == "L板断裂试验") {
-        ui->stackedWidgetIn->setCurrentIndex(3);
+        proIndex = 3;
+        ui->stackedWidgetIn->setCurrentIndex(proIndex);
     }
 }
 
@@ -276,7 +279,6 @@ void QWCalSoftware::leftCalClick()
             QAbstractButton *btn = btnsCal.at(i);
             btn->setChecked(btn == b);
         }
-        ui->labPcs->setText("当前项目：正在计算中");
         switch (proIndex)
         {
         case 0:
@@ -300,13 +302,11 @@ void QWCalSoftware::leftShowClick()//未完成
 {
     QToolButton *b = (QToolButton *)sender();
     QString name = b->text();
-
     int count = btnsShow.count();
     for (int i = 0; i < count; ++i) {
         QAbstractButton *btn = btnsShow.at(i);
         btn->setChecked(btn == b);
     }
-
     QPixmap pix;
     QGraphicsScene *scn = new QGraphicsScene;
 
@@ -322,6 +322,7 @@ void QWCalSoftware::leftShowClick()//未完成
     ui->View->setScene(scn);
     ui->View->fitInView((QGraphicsItem*)p, Qt::IgnoreAspectRatio);
     ui->View->show();
+
 }
 
 void QWCalSoftware::calGMPPD()
@@ -2470,7 +2471,6 @@ void QWCalSoftware::paintScatter(int n) //画图函数
 
 void QWCalSoftware::on_btnLoad1_clicked()
 {
-    proIndex = 0;
     paras.clear();
     QString str = ui->txt1_1->text();
     paras.append(str.toFloat());
@@ -2513,7 +2513,6 @@ void QWCalSoftware::on_btnLoad1_clicked()
 
 void QWCalSoftware::on_btnLoad2_clicked()
 {
-    proIndex = 1;
     paras.clear();
     QString str = ui->txt2_1->text();
     paras.append(str.toFloat());
@@ -2556,7 +2555,6 @@ void QWCalSoftware::on_btnLoad2_clicked()
 
 void QWCalSoftware::on_btnLoad3_clicked()
 {
-    proIndex = 2;
     paras.clear();
     QString str = ui->txt3_1->text();
     paras.append(str.toFloat());
@@ -2599,7 +2597,6 @@ void QWCalSoftware::on_btnLoad3_clicked()
 
 void QWCalSoftware::on_btnLoad4_clicked()
 {
-    proIndex = 3;
     paras.clear();
     QString str = ui->txt4_1->text();
     paras.append(str.toFloat());
@@ -2700,5 +2697,29 @@ void QWCalSoftware::on_Slider_valueChanged(int value)//未完成
     ui->View->setScene(scn);
     ui->View->fitInView((QGraphicsItem*)p, Qt::IgnoreAspectRatio);
     ui->View->show();
+
+}
+
+/*鼠标移动及界面调整大小*/
+
+void QWCalSoftware::mousePressEvent(QMouseEvent *event){
+    if (event->button() == Qt::LeftButton) {
+        // Capture the initial position when mouse is pressed
+        m_dragPosition = event->globalPos() - frameGeometry().topLeft();
+    }
+}
+
+void QWCalSoftware::mouseMoveEvent(QMouseEvent *event){
+    if (event->buttons() & Qt::LeftButton) {
+        // Move the window when the mouse is moved while pressed
+        move(event->globalPos() - m_dragPosition);
+    }
+}
+
+void QWCalSoftware::on_tbtnShow4_clicked()
+{
+    QWCalSoftware *p = this;
+    information *Information = new information(p, this);
+    Information->show();
 }
 

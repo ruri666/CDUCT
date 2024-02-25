@@ -93,11 +93,6 @@ int QUIHelper::deskHeight()
     return getScreenRect().height();
 }
 
-void QUIHelper::setFormProper(QWidget *form)
-{
-    form->resize(500,500);
-}
-
 QSize QUIHelper::deskSize()
 {
     return getScreenRect().size();
@@ -119,7 +114,6 @@ void QUIHelper::setFormInCenter(QWidget *form)
 
     int deskWidth = rect.width();
     int deskHeight = rect.height();
-
     QPoint movePoint(deskWidth / 2 - formWidth / 2 + rect.x(), deskHeight / 2 - formHeight / 2 + rect.y());
     form->move(movePoint);
 }

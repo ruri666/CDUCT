@@ -12,14 +12,17 @@ TARGET      = QWCalSoftware
 TEMPLATE    = app
 
 SOURCES += \
+    information.cpp \
     main.cpp \
     qwcalsoftware.cpp \
 
 HEADERS += \
     head.h \
+    information.h \
     qwcalsoftware.h \
 
 FORMS += \
+    information.ui \
     qwcalsoftware.ui \
 
 HEADERS += head.h
@@ -35,7 +38,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     src.qrc
 
-INCLUDEPATH += D:\7777777\Software\eigen-3.4.0
+INCLUDEPATH += F:\runtime\eigen-3.4.0
 INCLUDEPATH += $$PWD
 INCLUDEPATH += $$PWD/core_base
 include ($$PWD/core_base/core_base.pri)

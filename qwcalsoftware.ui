@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1131</width>
-    <height>692</height>
+    <width>899</width>
+    <height>549</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -93,7 +93,7 @@
             </property>
             <property name="icon">
              <iconset resource="src.qrc">
-              <normaloff>:/imgs/imgs/play.png</normaloff>:/imgs/imgs/play.png</iconset>
+              <normaloff>:/imgs/imgs/txt.png</normaloff>:/imgs/imgs/txt.png</iconset>
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
@@ -133,30 +133,10 @@
             </property>
             <property name="icon">
              <iconset resource="src.qrc">
-              <normaloff>:/imgs/imgs/play.png</normaloff>:/imgs/imgs/play.png</iconset>
+              <normaloff>:/imgs/imgs/smile1.png</normaloff>:/imgs/imgs/smile1.png</iconset>
             </property>
             <property name="checked">
              <bool>false</bool>
-            </property>
-            <property name="toolButtonStyle">
-             <enum>Qt::ToolButtonTextUnderIcon</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="toolButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>用户退出</string>
-            </property>
-            <property name="icon">
-             <iconset resource="src.qrc">
-              <normaloff>:/imgs/imgs/stop.png</normaloff>:/imgs/imgs/stop.png</iconset>
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
@@ -770,6 +750,11 @@
             </item>
             <item row="0" column="0">
              <widget class="QGroupBox" name="box1_1">
+              <property name="font">
+               <font>
+                <pointsize>7</pointsize>
+               </font>
+              </property>
               <property name="title">
                <string>物理参数</string>
               </property>
@@ -808,13 +793,6 @@
                        </property>
                        <property name="text">
                         <string>密度(Kg/m3)</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="lab1_12">
-                       <property name="text">
-                        <string>能量释放率G_0</string>
                        </property>
                       </widget>
                      </item>
@@ -863,19 +841,6 @@
                        </property>
                       </widget>
                      </item>
-                     <item>
-                      <widget class="QLineEdit" name="txt1_12">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="text">
-                        <string>1000</string>
-                       </property>
-                      </widget>
-                     </item>
                     </layout>
                    </widget>
                   </item>
@@ -914,6 +879,12 @@
                          <verstretch>0</verstretch>
                         </sizepolicy>
                        </property>
+                       <property name="font">
+                        <font>
+                         <family>Microsoft YaHei UI</family>
+                         <pointsize>7</pointsize>
+                        </font>
+                       </property>
                        <property name="text">
                         <string>弹性模型量E(Pa)</string>
                        </property>
@@ -929,7 +900,8 @@
                        </property>
                        <property name="font">
                         <font>
-                         <family>华文中宋</family>
+                         <family>Microsoft YaHei UI</family>
+                         <pointsize>7</pointsize>
                         </font>
                        </property>
                        <property name="text">
@@ -945,21 +917,14 @@
                          <verstretch>0</verstretch>
                         </sizepolicy>
                        </property>
+                       <property name="font">
+                        <font>
+                         <family>Microsoft YaHei UI</family>
+                         <pointsize>7</pointsize>
+                        </font>
+                       </property>
                        <property name="text">
                         <string>密度(Kg/m3)</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="lab2_12">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="text">
-                        <string>能量释放率G_0</string>
                        </property>
                       </widget>
                      </item>
@@ -1005,19 +970,6 @@
                        </property>
                        <property name="text">
                         <string>8000</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLineEdit" name="txt2_12">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="text">
-                        <string>1000</string>
                        </property>
                       </widget>
                      </item>
@@ -1483,13 +1435,6 @@
                        </property>
                       </widget>
                      </item>
-                     <item>
-                      <widget class="QLabel" name="lab3_12">
-                       <property name="text">
-                        <string>能量释放率G_0</string>
-                       </property>
-                      </widget>
-                     </item>
                     </layout>
                    </widget>
                   </item>
@@ -1532,19 +1477,6 @@
                        </property>
                        <property name="text">
                         <string>8000</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLineEdit" name="txt3_12">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="text">
-                        <string>1000</string>
                        </property>
                       </widget>
                      </item>
@@ -2278,13 +2210,6 @@
                        </property>
                       </widget>
                      </item>
-                     <item>
-                      <widget class="QLabel" name="lab4_11">
-                       <property name="text">
-                        <string>能量释放率G_0</string>
-                       </property>
-                      </widget>
-                     </item>
                     </layout>
                    </widget>
                   </item>
@@ -2327,19 +2252,6 @@
                        </property>
                        <property name="text">
                         <string>8000</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLineEdit" name="txt4_11">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="text">
-                        <string>65</string>
                        </property>
                       </widget>
                      </item>
@@ -2563,6 +2475,22 @@
             </widget>
            </item>
            <item>
+            <widget class="QToolButton" name="tbtnShow4">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::TabFocus</enum>
+             </property>
+             <property name="text">
+              <string>当前模型参数</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <spacer name="verticalSpacer_4">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
@@ -2570,7 +2498,7 @@
              <property name="sizeHint" stdset="0">
               <size>
                <width>20</width>
-               <height>200</height>
+               <height>88</height>
               </size>
              </property>
             </spacer>
